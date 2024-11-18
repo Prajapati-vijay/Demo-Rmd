@@ -1,0 +1,42 @@
+---
+title: "RMD Job with SQL Server Query"
+output:
+  html_document: default
+  pdf_document: default
+---
+  
+  ```{r DB_Connect}
+# Load necessary libraries
+library(DBI)
+library(odbc)  # odbc package for SQL Server connection
+
+# Define connection details (update with your own connection info)
+server <- "host.docker.internal"   # Can be IP address or hostname
+database <- "student"
+username <- "SA"
+password <- "vijay123"
+
+# Establish connection to the SQL Server database using odbc
+conn <- dbConnect(odbc::odbc(),
+                  Driver = "SQL Server",     # Use the correct driver for SQL Server
+                  Server = server,
+                  Database = database,
+                  UID = username,
+                  PWD = password,
+                  Port = 1433)  # Default port for SQL Server is 1433
+
+# Check the connection (optional)
+print(conn)
+
+# Raw SQL query to fetch data from the students table
+query <- "SELECT * FROM students"
+
+# Execute the query and store the results in a data frame
+students_data <- dbGetQuery(conn, query)
+
+# Print the first few rows of the students data
+head(students_data)
+
+# Close the database connection
+dbDisconnect(conn)
+ 
