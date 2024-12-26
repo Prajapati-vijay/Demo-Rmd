@@ -4,11 +4,51 @@ output:
   html_document: default
   pdf_document: default
 ---
-
+  
 ```{r DB_Connect}
 # Load necessary libraries
-print("Test by Vijay")
+library(DBI)
+library(odbc)  # odbc package for SQL Server connection
 
-# Print the current date and time
-print(Sys.time())
+# Define connection details (update with your own connection info)
+server <- "sqlserver"   # Can be IP address or hostname
+database <- "student"
+username <- "SA"
+password <- "Vijay123456"
+
+# Establish connection to the SQL Server database using odbc
+conn <- dbConnect(odbc::odbc(),
+                  Driver = "ODBC Driver 17 for SQL Server",     # Use the correct driver for SQL Server
+                  Server = server,
+                  Database = database,
+                  UID = username,
+                  PWD = password,
+                  Port = 1433)  # Default port for SQL Server is 1433
+
+# Check the connection (optional)
+print(conn)
+
+insert_query <- "
+INSERT INTO students ( name, age, grade, city) 
+VALUES 
+    ('John Doe', 20, 'A', 'New York'),
+    ( 'Jane Smith', 22, 'B', 'Los Angeles'),
+    ( 'Alice Brown', 21, 'A', 'Chicago'),
+    ( 'Bob White', 23, 'C', 'Houston'),
+    ( 'Charlie Black', 19, 'B', 'Phoenix');
+"
+
+# Execute the insert query
+dbExecute(conn, insert_query)
+# Raw SQL query to fetch data from the students table
+query <- "SELECT * FROM students"
+
+# Execute the query and store the results in a data frame
+students_data <- dbGetQuery(conn, query)
+
+# Print the first few rows of the students data
+head(students_data)
+
+# Close the database connection
+dbDisconnect(conn)
 ```
